@@ -1,0 +1,31 @@
+# Render deployment configuration
+# Deploy this as the ROOT directory (monorepo with backend/ subdir)
+
+services:
+  - type: web
+    name: travelcompare-api
+    env: node
+    region: singapore          # closest to Indian users
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000            # Render injects PORT automatically; this is a fallback
+      - key: ENABLE_SCRAPING
+        value: false            # Keep false on free tier (no Chromium). Set true on paid.
+      - key: CACHE_TTL
+        value: 300
+      - key: RATE_LIMIT_MAX
+        value: 100
+      # Fill these in Render dashboard → Environment tab:
+      - key: MONGODB_URI
+        sync: false             # secret — set manually in dashboard
+      - key: REDIS_URL
+        sync: false             # secret — set manually in dashboard
+      - key: FRONTEND_URL
+        sync: false             # e.g. https://travelcompare.vercel.app
